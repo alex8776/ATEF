@@ -1,0 +1,64 @@
+# =============================================================
+# Déploiement automatique sur GitHub Pages
+# À chaque "git push" sur la branche main, GitHub :
+#   1. installe les dépendances (npm ci)
+#   2. construit le site (npm run build → dossier dist/)
+#   3. publie le dossier dist/ sur GitHub Pages
+# =============================================================
+name: Déployer sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # permet aussi de lancer le déploiement à la main depuis l'onglet "Actions"
+
+# Autorisations nécessaires pour publier sur GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Construire le site
+        run: npm run build
+
+      # GitHub Pages ne connaît pas les routes de React Router (/a-propos, /actualites…) :
+      # si on recharge une de ces pages, il renvoie sa page 404.html.
+      # En copiant index.html dans 404.html, c'est React qui s'affiche et qui gère la route.
+      - name: Gérer les routes React (404.html)
+        run: cp dist/index.html dist/404.html
+
+      - name: Préparer les fichiers pour Pages
+        uses: actions/configure-pages@v5
+
+      - name: Envoyer le dossier dist
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Publier sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

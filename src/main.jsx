@@ -24,7 +24,9 @@ createRoot(elementRacine).render(
   // StrictMode : mode "strict" de React, affiche des avertissements
   // utiles dans la console pendant le développement (aucun effet en production)
   <StrictMode>
-    <BrowserRouter>
+    {/* basename : le site vit dans le sous-dossier /ATEF/ (voir "base" dans vite.config.js).
+        import.meta.env.BASE_URL contient cette valeur : React Router l'ajoute à tous les liens. */}
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <App />
     </BrowserRouter>
   </StrictMode>,

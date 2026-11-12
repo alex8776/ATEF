@@ -4,6 +4,7 @@
 // le même code, on crée UN composant réutilisable.
 // =============================================================
 
+import { Link } from 'react-router-dom'
 import { FaArrowRight } from 'react-icons/fa6'
 import './BoutonDore.css'
 
@@ -29,16 +30,34 @@ function BoutonDore({
   externe = false,
   className = '',
 }) {
-  return (
-    <a
-      href={lien}
-      className={`bouton-dore bouton-dore--${variante} ${className}`}
-      // 📘 "..." (spread) : ajoute ces attributs seulement si externe vaut true
-      {...(externe && { target: '_blank', rel: 'noopener noreferrer' })}
-    >
+  const classes = `bouton-dore bouton-dore--${variante} ${className}`
+  const contenu = (
+    <>
       {Icone && <Icone className="bouton-dore__icone" aria-hidden="true" />}
       <span>{texte}</span>
       {fleche && <FaArrowRight className="bouton-dore__fleche" aria-hidden="true" />}
+    </>
+  )
+
+  // Lien vers une page du site ("/a-propos"…) → <Link> de React Router :
+  // pas de rechargement, et le sous-dossier /ATEF/ de GitHub Pages est ajouté tout seul.
+  if (lien.startsWith('/')) {
+    return (
+      <Link to={lien} className={classes}>
+        {contenu}
+      </Link>
+    )
+  }
+
+  // Sinon (ancre "#biographie", "mailto:", WhatsApp…) → lien HTML classique
+  return (
+    <a
+      href={lien}
+      className={classes}
+      // 📘 "..." (spread) : ajoute ces attributs seulement si externe vaut true
+      {...(externe && { target: '_blank', rel: 'noopener noreferrer' })}
+    >
+      {contenu}
     </a>
   )
 }
