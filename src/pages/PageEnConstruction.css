@@ -1,0 +1,22 @@
+.page-en-construction {
+  min-height: 80vh;
+  padding: 160px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.page-en-construction__titre {
+  font-size: 96px;
+}
+
+.page-en-construction__retour {
+  color: var(--couleur-menu);
+}
+
+.page-en-construction__retour:hover {
+  color: var(--couleur-or);
+}

@@ -1,0 +1,142 @@
+/* =============================================================
+   Écran de chargement — animation de révélation du logo
+   ============================================================= */
+.ecran-chargement {
+  position: fixed;
+  inset: 0;
+  z-index: 1000; /* plus haut que la barre de navigation (100) */
+  background: #fdfbf7; /* blanc ivoire très léger */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.7s ease, visibility 0.7s; /* = DUREE_FONDU dans le .jsx */
+}
+
+.ecran-chargement.est-cache {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* on peut déjà cliquer sur le site pendant le fondu */
+}
+
+/* Conteneur du logo : l'image des lettres et le SVG sont superposés.
+   Il grandit très légèrement pendant toute l'animation (effet "respiration"). */
+.logo-anime {
+  position: relative;
+  width: 357px;
+  max-width: 80vw;
+  aspect-ratio: 357 / 179;
+  animation: logo-respiration 4s ease-out both;
+}
+
+.logo-anime__svg,
+.logo-anime__lettres {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- 1. L'ellipse qui se dessine ----------
+   📘 Astuce classique : un trait en pointillés dont le "trou" fait toute la longueur.
+   En décalant le pointillé (dashoffset) de 1 à 0, le trait apparaît progressivement. */
+.logo-anime__ellipse {
+  fill: none;
+  stroke: var(--couleur-or);
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: dessin-ellipse 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.3s forwards;
+}
+
+/* ---------- La lueur au bout du trait ----------
+   offset-path : l'élément suit le même tracé que l'ellipse.
+   offset-distance : sa position sur ce tracé (0% = départ, 100% = arrivée). */
+.logo-anime__lueur {
+  offset-path: var(--trace);
+  offset-rotate: 0deg;
+  opacity: 0;
+  animation:
+    suivre-trait 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.3s forwards,
+    lueur-visible 2.1s ease 0.3s forwards;
+}
+
+.logo-anime__halo {
+  fill: rgba(213, 173, 107, 0.35);
+  filter: blur(3px);
+}
+
+.logo-anime__coeur {
+  fill: #fff7e6;
+  filter: drop-shadow(0 0 3px #f3d49b) drop-shadow(0 0 6px var(--couleur-or));
+}
+
+/* ---------- 2. Les lettres qui se dévoilent ----------
+   clip-path découpe l'image : on montre d'abord 0 %, puis 100 % de la largeur. */
+.logo-anime__lettres {
+  clip-path: inset(0 100% 0 0);
+  filter: blur(6px);
+  opacity: 0;
+  animation: devoiler-lettres 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1.5s forwards;
+}
+
+/* ---------- 3. La signature ---------- */
+.ecran-chargement__signature {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: apparition-signature 1s ease-out 2.7s forwards;
+}
+
+/* =============================================================
+   📘 @keyframes : on décrit chaque animation étape par étape
+   ============================================================= */
+@keyframes logo-respiration {
+  from { transform: scale(0.94); }
+  to   { transform: scale(1); }
+}
+
+@keyframes dessin-ellipse {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes suivre-trait {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+/* La lueur s'allume au départ et s'éteint quand le trait est fini */
+@keyframes lueur-visible {
+  0%   { opacity: 0; }
+  10%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes devoiler-lettres {
+  from { clip-path: inset(0 100% 0 0); filter: blur(6px); opacity: 0; }
+  30%  { opacity: 1; }
+  to   { clip-path: inset(0 0 0 0);    filter: blur(0);   opacity: 1; }
+}
+
+@keyframes apparition-signature {
+  from { opacity: 0; transform: translate(-50%, 10px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* Pas d'animation pour les personnes qui les ont désactivées : logo affiché directement */
+@media (prefers-reduced-motion: reduce) {
+  .logo-anime,
+  .logo-anime__ellipse,
+  .logo-anime__lettres,
+  .ecran-chargement__signature {
+    animation: none;
+    stroke-dashoffset: 0;
+    clip-path: none;
+    filter: none;
+    opacity: 1;
+  }
+  .logo-anime__lueur { display: none; }
+}

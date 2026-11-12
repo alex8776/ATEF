@@ -1,0 +1,168 @@
+/* =============================================================
+   index.css — STYLES GLOBAUX
+   Ce fichier s'applique à TOUT le site.
+   On y met : les couleurs, les polices et les règles de base.
+   Les styles propres à chaque composant sont dans leur propre .css
+   ============================================================= */
+
+/* --- Variables CSS ("design tokens") ---
+   On définit les couleurs de la maquette UNE seule fois ici.
+   Ensuite on les utilise partout avec var(--nom).
+   Avantage : pour changer le doré sur tout le site, on modifie une seule ligne. */
+:root {
+  --couleur-or: #d5ad6b;          /* doré principal (titres, boutons, menu actif) */
+  --couleur-or-fonce: #c49a55;    /* doré un peu plus sombre (survol des boutons) */
+  --couleur-texte: #414141;       /* gris foncé des paragraphes */
+  --couleur-menu: #9a9595;        /* gris des liens du menu non actifs */
+  --couleur-texte-bouton: #ecebec;/* blanc cassé du texte des boutons */
+  --couleur-fond: #ffffff;
+  --couleur-or-clair: #f3d9a8;    /* doré clair (texte sur fond sombre) */
+  --couleur-encre: #2b2b2b;       /* presque noir (citations, liens du menu mobile) */
+  --couleur-ivoire: #fdfbf7;      /* blanc ivoire (fonds) */
+  --couleur-ivoire-2: #f6f1e9;    /* ivoire plus soutenu (section événement mobile) */
+  --couleur-sombre: #1f1d1a;      /* footer mobile & tablette */
+
+  --ombre-douce: 0 4px 4px 2px rgba(163, 163, 163, 0.3);
+
+  /* Texte courant : 17px max, il réduit un peu sur les écrans peu hauts.
+     📘 clamp(MIN, IDÉAL, MAX) : la valeur suit l'IDÉAL sans sortir des bornes.
+     vh = % de la hauteur de l'écran (1vh = 1 % de la hauteur). */
+  --taille-texte: clamp(15px, 2.1vh, 17px);
+  --interligne-texte: 1.6;
+
+  /* Hauteur de la barre de navigation fixe : chaque section garde
+     cet espace en haut pour que son contenu ne passe pas dessous */
+  --hauteur-nav: 62px;
+
+  /* Hauteur d'une section = hauteur de l'écran.
+     svh ("small viewport height") évite les bugs de la barre d'adresse sur mobile */
+  --hauteur-ecran: 100svh;
+
+  --police-manuscrite: 'Island Moments', cursive;
+  --police-texte: 'Instrument Sans', system-ui, sans-serif;
+
+  /* Largeur max du contenu (la maquette fait 1280px de large) */
+  --largeur-max: 1280px;
+}
+
+/* 📘 Les 3 formats du site :
+   - ordinateur : plus de 1024px  (styles "de base" de chaque fichier)
+   - tablette   : de 769 à 1024px  (@media (max-width: 1024px))
+   - téléphone  : 768px et moins  (@media (max-width: 768px))
+   Sur tablette et téléphone, l'en-tête devient une pilule flottante :
+   --hauteur-nav = marge du haut + hauteur de la pilule. */
+@media (max-width: 1024px) {
+  :root {
+    --hauteur-nav: 84px; /* 20px de marge + 64px de pilule */
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --hauteur-nav: 68px; /* 12px de marge + 56px de pilule */
+  }
+}
+
+/* --- Reset : on enlève les marges par défaut du navigateur --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box; /* la taille d'un élément inclut son padding et sa bordure */
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth; /* défilement fluide quand on clique sur un lien #ancre */
+}
+
+/* Quand on saute vers une section (#biographie), elle se cale tout en haut :
+   l'espace pour la barre de navigation est déjà inclus dans la section */
+section {
+  scroll-margin-top: 0;
+}
+
+body {
+  font-family: var(--police-texte);
+  color: var(--couleur-texte);
+  background: var(--couleur-fond);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* évite une barre de défilement horizontale */
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* =============================================================
+   PETITS ÉLÉMENTS RÉUTILISÉS PARTOUT
+   ============================================================= */
+
+/* Surtitre : petit trait doré + texte en majuscules espacées ("— À PROPOS") */
+.surtitre {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--couleur-or-fonce);
+}
+
+.surtitre::before {
+  content: '';
+  width: 28px;
+  height: 1.5px;
+  background: var(--couleur-or);
+}
+
+/* Pastille : petite étiquette arrondie posée sur une photo */
+.pastille {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Cache un élément à l'écran mais le laisse lisible par les lecteurs d'écran */
+.visuellement-cache {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Sur tablette et téléphone, les liens #ancre s'arrêtent sous l'en-tête flottant */
+@media (max-width: 1024px) {
+  section {
+    scroll-margin-top: var(--hauteur-nav);
+  }
+}
+
+/* Classe réutilisable pour les titres en écriture manuscrite dorée */
+.texte-manuscrit {
+  font-family: var(--police-manuscrite);
+  font-weight: 400;
+  color: var(--couleur-or);
+  line-height: 1.2;
+}

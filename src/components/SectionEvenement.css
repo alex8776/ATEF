@@ -1,0 +1,324 @@
+/* =============================================================
+   Section Événement — ORDINATEUR (styles de base)
+   ============================================================= */
+.section-evenement {
+  position: relative;
+  min-height: var(--hauteur-ecran);
+  padding: calc(var(--hauteur-nav) + 3vh) 24px 5vh;
+  overflow: hidden;
+
+  /* centre la carte verticalement dans l'écran */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Photo du public, très transparente (20%) */
+.section-evenement__fond {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  opacity: 0.2;
+}
+
+/* Même dégradé qu'en bas du hero : le fond apparaît en douceur depuis le blanc */
+.section-evenement::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: linear-gradient(to bottom, #fff, rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+/* La carte blanche : 1020px de large, coins arrondis 60px */
+.section-evenement__carte {
+  position: relative; /* passe au-dessus de l'image de fond */
+  max-width: 1020px;
+  margin: 0 auto;
+  /* l'espace intérieur rétrécit sur les écrans peu hauts */
+  padding: clamp(32px, 7vh, 80px) 87px;
+  background: #fff;
+  border-radius: 60px;
+  box-shadow: 0 4px 4px 4px rgba(163, 163, 163, 0.3);
+
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+/* Le cadre de la photo (la pastille "lieu" est posée dessus) */
+.section-evenement__media {
+  position: relative;
+  flex-shrink: 0; /* la photo ne rétrécit pas quand la place manque */
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.section-evenement__photo {
+  /* 396px max (maquette), sinon s'adapte à la hauteur de l'écran */
+  height: min(396px, calc(var(--hauteur-ecran) - var(--hauteur-nav) - 28vh));
+  width: auto;
+  aspect-ratio: 305 / 396;
+  object-fit: cover;
+}
+
+.section-evenement__texte {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Petit libellé au-dessus du titre */
+.section-evenement__surtitre {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--couleur-menu);
+  margin-bottom: 12px;
+}
+
+.section-evenement__titre {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--couleur-or);
+}
+
+.section-evenement__description {
+  margin-top: clamp(12px, 2.9vh, 24px);
+  font-size: var(--taille-texte);
+  line-height: var(--interligne-texte);
+}
+
+.section-evenement__texte .bouton-dore {
+  margin-top: clamp(20px, 4.8vh, 40px);
+}
+
+/* Éléments réservés à la tablette / au téléphone : cachés sur ordinateur */
+.section-evenement__entete,
+.section-evenement__lieu,
+.section-evenement__pagination {
+  display: none;
+}
+
+/* --- Styles communs tablette + téléphone --- */
+.section-evenement__titre-section {
+  font-size: 60px;
+  line-height: 1;
+  margin-top: 8px;
+}
+
+.section-evenement__lieu {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  color: var(--couleur-encre);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.section-evenement__lieu svg {
+  color: var(--couleur-or-fonce);
+}
+
+.section-evenement__fleches {
+  display: flex;
+  gap: 10px;
+}
+
+.section-evenement__fleches button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  background: #fff;
+  border: 1px solid rgba(213, 173, 107, 0.5);
+  color: var(--couleur-or-fonce);
+}
+
+.section-evenement__fleches button:last-child {
+  background: var(--couleur-or);
+  border-color: var(--couleur-or);
+  color: #fff;
+}
+
+/* désactivées tant qu'il n'y a qu'un seul événement */
+.section-evenement__fleches button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.section-evenement__pagination {
+  justify-content: center;
+  gap: 8px;
+}
+
+.section-evenement__pagination span {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(213, 173, 107, 0.35);
+}
+
+.section-evenement__pagination span.est-actif {
+  width: 28px;
+  background: var(--couleur-or);
+}
+
+/* =============================================================
+   TABLETTE (769 → 1024px) : carte horizontale, photo collée à gauche
+   ============================================================= */
+@media (max-width: 1024px) {
+  .section-evenement {
+    min-height: 0;
+    padding: 72px 48px;
+    gap: 24px;
+    background: var(--couleur-ivoire-2);
+  }
+
+  /* pas de photo du public ni de dégradé blanc sur tablette/téléphone */
+  .section-evenement__fond,
+  .section-evenement::before {
+    display: none;
+  }
+
+  .section-evenement__entete {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .section-evenement__entete .surtitre {
+    font-size: 13px;
+  }
+
+  .section-evenement__carte {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+    gap: 0;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(115, 97, 71, 0.14);
+    align-items: stretch;
+  }
+
+  .section-evenement__media {
+    width: 330px;
+    border-radius: 0;
+  }
+
+  .section-evenement__photo {
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    aspect-ratio: auto;
+  }
+
+  .section-evenement__lieu {
+    display: inline-flex;
+  }
+
+  /* le libellé est déjà dans l'en-tête de section */
+  .section-evenement__surtitre {
+    display: none;
+  }
+
+  .section-evenement__texte {
+    flex: 1;
+    max-width: none;
+    justify-content: center;
+    padding: 32px 36px;
+  }
+
+  .section-evenement__titre {
+    font-size: 26px;
+    line-height: 1.22;
+    color: var(--couleur-or-fonce);
+  }
+
+  .section-evenement__description {
+    margin-top: 16px;
+    font-size: 16px;
+  }
+
+  .section-evenement__texte .bouton-dore {
+    width: 220px;
+    margin-top: 28px;
+  }
+
+  .section-evenement__pagination {
+    display: flex;
+  }
+}
+
+/* =============================================================
+   TÉLÉPHONE (≤ 768px) : carte verticale, photo en haut
+   ============================================================= */
+@media (max-width: 768px) {
+  .section-evenement {
+    padding: 44px 24px 48px;
+    gap: 18px;
+  }
+
+  .section-evenement__entete .surtitre {
+    font-size: 12px;
+  }
+
+  .section-evenement__titre-section {
+    font-size: 52px;
+  }
+
+  /* pas de flèches sur téléphone : on glissera avec le doigt */
+  .section-evenement__fleches {
+    display: none;
+  }
+
+  .section-evenement__carte {
+    flex-direction: column;
+    border-radius: 28px;
+  }
+
+  .section-evenement__media {
+    width: 100%;
+  }
+
+  .section-evenement__photo {
+    height: 250px;
+    min-height: 0;
+  }
+
+  .section-evenement__lieu {
+    left: 16px;
+    bottom: 16px;
+  }
+
+  .section-evenement__texte {
+    padding: 22px 22px 24px;
+  }
+
+  .section-evenement__titre {
+    font-size: 21px;
+    line-height: 1.25;
+  }
+
+  .section-evenement__description {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .section-evenement__texte .bouton-dore {
+    width: 100%;
+    margin-top: 22px;
+  }
+}

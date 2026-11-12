@@ -1,0 +1,21 @@
+/* Avant d'être visible : transparent et légèrement plus bas */
+.apparition {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* Quand React ajoute "est-visible" : il remonte en fondu */
+.apparition.est-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Pas d'animation pour les personnes qui les ont désactivées dans leur système */
+@media (prefers-reduced-motion: reduce) {
+  .apparition {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

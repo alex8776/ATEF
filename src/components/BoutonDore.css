@@ -1,0 +1,88 @@
+/* Bouton en forme de pilule (352 × 50 px dans la maquette) */
+.bouton-dore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 352px;
+  max-width: 100%;  /* sur petit écran, le bouton ne dépasse jamais */
+  height: 50px;
+  padding: 0 24px;
+
+  font-family: var(--police-texte);
+  font-weight: 600;
+  font-size: 18px;
+  border-radius: 82px;
+  border: 1.5px solid var(--couleur-or);
+
+  /* animation douce au survol */
+  transition: background 0.25s, color 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+
+.bouton-dore:hover {
+  transform: translateY(-2px);
+}
+
+/* --- Variante PLEIN : action principale --- */
+.bouton-dore--plein {
+  background: var(--couleur-or);
+  color: #fff;
+  box-shadow: var(--ombre-douce);
+}
+
+.bouton-dore--plein:hover {
+  background: var(--couleur-or-fonce);
+  border-color: var(--couleur-or-fonce);
+}
+
+/* --- Variante CONTOUR : action secondaire --- */
+.bouton-dore--contour {
+  background: transparent;
+  color: var(--couleur-or-fonce);
+}
+
+/* Au survol, le bouton contour se remplit de doré */
+.bouton-dore--contour:hover {
+  background: var(--couleur-or);
+  color: #fff;
+  box-shadow: var(--ombre-douce);
+}
+
+/* --- Icônes --- */
+.bouton-dore__icone {
+  font-size: 18px;
+}
+
+/* La flèche n'apparaît que sur tablette et téléphone (le desktop garde la maquette d'origine) */
+.bouton-dore__fleche {
+  display: none;
+  font-size: 15px;
+  transition: transform 0.25s;
+}
+
+.bouton-dore:hover .bouton-dore__fleche {
+  transform: translateX(4px);
+}
+
+@media (max-width: 1024px) {
+  .bouton-dore {
+    height: 54px;
+    font-size: 17px;
+  }
+
+  .bouton-dore__fleche {
+    display: inline-block;
+  }
+
+  /* Sur tablette, le bouton contour a un léger fond blanc (il peut passer sur une photo) */
+  .bouton-dore--contour {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+
+@media (max-width: 768px) {
+  .bouton-dore {
+    height: 52px;
+    font-size: 16px;
+  }
+}

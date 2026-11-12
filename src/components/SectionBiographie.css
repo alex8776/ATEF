@@ -1,0 +1,241 @@
+/* =============================================================
+   Section Biographie — ORDINATEUR (styles de base)
+   2 colonnes (photo | texte), hauteur = celle de l'écran.
+   ============================================================= */
+.section-biographie {
+  max-width: var(--largeur-max);
+  min-height: var(--hauteur-ecran);
+  margin: 0 auto;
+  /* en haut : la place de la barre de nav + un peu d'air */
+  padding: calc(var(--hauteur-nav) + 3vh) 110px 5vh;
+
+  /* 📘 CSS Grid : on découpe la section en 2 colonnes.
+     "auto" = la colonne prend la largeur de la photo */
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: clamp(48px, 8vw, 100px);
+  align-items: center;   /* centre le texte par rapport à la photo */
+  align-content: center; /* centre le tout verticalement dans l'écran */
+}
+
+/* La carte photo sert de repère pour les éléments posés dessus */
+.section-biographie__carte {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden; /* les éléments posés dessus suivent les coins arrondis */
+  box-shadow: 0 20px 40px -20px rgba(65, 65, 65, 0.35);
+}
+
+/* La photo : 560px de haut max (maquette), mais jamais plus haute
+   que l'écran moins la barre de nav et les marges.
+   📘 min(A, B) prend la plus petite des deux valeurs.
+   aspect-ratio garde les proportions : la largeur se calcule toute seule. */
+.section-biographie__photo {
+  height: min(560px, calc(var(--hauteur-ecran) - var(--hauteur-nav) - 12vh));
+  width: auto;
+  aspect-ratio: 410 / 560;
+  object-fit: cover;
+}
+
+/* Texte aligné à gauche : bien plus confortable à lire qu'un long bloc centré */
+.section-biographie__colonne-texte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 560px;
+}
+
+.section-biographie__nom {
+  font-size: clamp(48px, 8.6vh, 72px);
+  word-spacing: 0.3em; /* l'espace large entre "Edith" et "Assona" */
+  margin-bottom: clamp(12px, 3.4vh, 28px);
+}
+
+.section-biographie__paragraphe {
+  font-size: var(--taille-texte);
+  line-height: var(--interligne-texte);
+}
+
+/* Espace entre les paragraphes */
+.section-biographie__paragraphe + .section-biographie__paragraphe {
+  margin-top: clamp(10px, 2.4vh, 20px);
+}
+
+.section-biographie__colonne-texte .bouton-dore {
+  margin-top: clamp(20px, 5vh, 44px);
+}
+
+/* Éléments réservés à la tablette / au téléphone : cachés sur ordinateur */
+.section-biographie__surtitre,
+.section-biographie__pastille,
+.section-biographie__nom-photo,
+.section-biographie__citation {
+  display: none;
+}
+
+/* --- Styles communs tablette + téléphone (affichés via les media queries) --- */
+.section-biographie__pastille {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.section-biographie__pastille img {
+  width: 18px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* Citation : barre dorée à gauche, texte en italique */
+.section-biographie__citation {
+  margin-top: 22px;
+  padding-left: 16px;
+  border-left: 3px solid var(--couleur-or);
+  font-size: 18px;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--couleur-encre);
+}
+
+/* =============================================================
+   TABLETTE (769 → 1024px)
+   ============================================================= */
+@media (max-width: 1024px) {
+  .section-biographie {
+    min-height: 0;
+    padding: 72px 48px 80px;
+    grid-template-columns: 320px 1fr;
+    column-gap: 40px;
+    row-gap: 28px;
+  }
+
+  /* le surtitre occupe toute la largeur de la grille (au-dessus des 2 colonnes) */
+  .section-biographie__surtitre {
+    display: inline-flex;
+    grid-column: 1 / -1;
+    font-size: 13px;
+  }
+
+  .section-biographie__carte {
+    border-radius: 28px;
+    box-shadow: 0 12px 30px rgba(115, 97, 71, 0.18);
+  }
+
+  /* Dégradé sombre en bas de la photo (pour que la pastille reste lisible) */
+  .section-biographie__carte::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 45%;
+    background: linear-gradient(to bottom, rgba(31, 29, 26, 0), rgba(31, 29, 26, 0.7));
+    pointer-events: none;
+  }
+
+  .section-biographie__photo {
+    width: 100%;
+    height: 460px;
+    aspect-ratio: auto;
+  }
+
+  .section-biographie__pastille {
+    display: inline-flex;
+    z-index: 1; /* au-dessus du dégradé */
+  }
+
+  .section-biographie__nom {
+    font-size: 66px;
+    line-height: 1;
+    margin-bottom: 18px;
+  }
+
+  .section-biographie__paragraphe {
+    font-size: 16px;
+  }
+
+  .section-biographie__citation {
+    display: block;
+  }
+
+  .section-biographie__colonne-texte .bouton-dore {
+    width: 240px;
+    margin-top: 24px;
+  }
+}
+
+/* =============================================================
+   TÉLÉPHONE (≤ 768px) : une seule colonne, nom écrit sur la photo
+   ============================================================= */
+@media (max-width: 768px) {
+  .section-biographie {
+    grid-template-columns: 1fr;
+    row-gap: 22px;
+    padding: 44px 24px 52px;
+  }
+
+  .section-biographie__surtitre {
+    font-size: 12px;
+  }
+
+  .section-biographie__photo {
+    height: auto;
+    aspect-ratio: 342 / 440;
+  }
+
+  .section-biographie__carte::after {
+    height: 50%;
+    background: linear-gradient(to bottom, rgba(31, 29, 26, 0), rgba(31, 29, 26, 0.82));
+  }
+
+  /* la pastille passe en haut à gauche */
+  .section-biographie__pastille {
+    top: 16px;
+    bottom: auto;
+  }
+
+  /* Le nom manuscrit, en doré clair, posé en bas de la photo */
+  .section-biographie__nom-photo {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    left: 22px;
+    bottom: 18px;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--couleur-or-clair);
+  }
+
+  /* Le titre <h2> reste pour les lecteurs d'écran, mais est caché à l'écran
+     (le nom est déjà écrit sur la photo) — même technique que .visuellement-cache */
+  .section-biographie__nom {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .section-biographie__paragraphe {
+    line-height: 1.6;
+  }
+
+  /* Sur téléphone, on garde le texte court : seulement le 1er paragraphe + la citation */
+  .section-biographie__paragraphe + .section-biographie__paragraphe {
+    display: none;
+  }
+
+  .section-biographie__citation {
+    font-size: 19px;
+  }
+
+  .section-biographie__colonne-texte .bouton-dore {
+    width: 100%;
+  }
+}

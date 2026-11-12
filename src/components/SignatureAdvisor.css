@@ -1,0 +1,16 @@
+/* Badge 21 (53 × 47 px) collé au mot "Advisor" (40px) */
+.signature-advisor {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.signature-advisor__badge {
+  width: 53px;
+  height: 47px;
+  object-fit: contain;
+}
+
+.signature-advisor__texte {
+  font-size: 40px;
+}

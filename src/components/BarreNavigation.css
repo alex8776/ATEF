@@ -1,0 +1,334 @@
+/* =============================================================
+   Barre de navigation — effet "verre dépoli" blanc semi-transparent,
+   coins arrondis en bas, légère ombre (comme dans Figma).
+   ============================================================= */
+.barre-navigation {
+  position: fixed;   /* reste collée en haut quand on défile */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;      /* passe au-dessus de tout le reste */
+
+  height: var(--hauteur-nav); /* définie dans index.css (62px) */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);           /* floute ce qu'il y a derrière */
+  -webkit-backdrop-filter: blur(8px);   /* même chose pour Safari */
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 4px 4px rgba(163, 163, 163, 0.3);
+
+  /* Cachée au-dessus de l'écran tant que le site charge… */
+  transform: translateY(-110%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
+}
+
+/* …puis elle descend quand React ajoute la classe "est-visible" */
+.barre-navigation.est-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barre-navigation { transition: none; }
+}
+
+.barre-navigation__contenu {
+  max-width: var(--largeur-max);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 81px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.barre-navigation__logo img {
+  width: 86px;
+  height: 43px;
+  object-fit: contain;
+}
+
+/* --- Liens du menu --- */
+.barre-navigation__liens {
+  display: flex;
+  gap: 44px;
+}
+
+.barre-navigation__lien {
+  position: relative;
+  font-size: 16px;
+  color: var(--couleur-menu);
+  transition: color 0.2s;
+}
+
+.barre-navigation__lien:hover,
+.barre-navigation__lien.est-actif {
+  color: var(--couleur-or);
+}
+
+/* Petit trait doré sous le lien actif (42px dans la maquette).
+   ::after crée un élément "virtuel" sans toucher au HTML. */
+.barre-navigation__lien.est-actif::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 32px;
+  height: 2px;
+  background: var(--couleur-or);
+  transform: translateX(-50%);
+}
+
+.barre-navigation__langue {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--couleur-menu);
+}
+
+.barre-navigation__langue:hover {
+  color: var(--couleur-or);
+}
+
+/* --- Bouton burger : caché sur ordinateur et tablette --- */
+.barre-navigation__burger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(213, 173, 107, 0.14);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.barre-navigation__burger span {
+  width: 18px;
+  height: 1.8px;
+  border-radius: 2px;
+  background: var(--couleur-or-fonce);
+  transition: transform 0.3s, opacity 0.3s, width 0.3s;
+}
+
+/* la 3e ligne est plus courte (comme dans la maquette) */
+.barre-navigation__burger span:nth-child(3) {
+  width: 12px;
+  align-self: flex-end;
+  margin-right: 11px;
+}
+
+/* Le burger se transforme en croix ✕ quand le menu est ouvert */
+.barre-navigation__burger.est-ouvert span:nth-child(1) { transform: translateY(5.8px) rotate(45deg); }
+.barre-navigation__burger.est-ouvert span:nth-child(2) { opacity: 0; }
+.barre-navigation__burger.est-ouvert span:nth-child(3) {
+  width: 18px;
+  margin-right: 11px;
+  transform: translateY(-5.8px) rotate(-45deg);
+}
+
+/* =============================================================
+   TABLETTE (769 → 1024px) : la barre devient une pilule flottante
+   ============================================================= */
+@media (max-width: 1024px) {
+  .barre-navigation {
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    height: 64px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 12px 30px rgba(115, 97, 71, 0.12);
+    /* cachée plus haut que la marge pendant le chargement */
+    transform: translateY(calc(-100% - 40px));
+  }
+
+  .barre-navigation__contenu {
+    padding: 0 24px;
+    gap: 24px;
+  }
+
+  .barre-navigation__logo img {
+    width: 76px;
+    height: 38px;
+  }
+
+  .barre-navigation__liens {
+    gap: 36px;
+  }
+
+  .barre-navigation__lien.est-actif::after {
+    width: 24px;
+    height: 1.5px;
+  }
+}
+
+/* =============================================================
+   TÉLÉPHONE (≤ 768px) : pilule plus petite, liens remplacés par ☰
+   ============================================================= */
+@media (max-width: 768px) {
+  .barre-navigation {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    height: 56px;
+    border-radius: 28px;
+  }
+
+  .barre-navigation__contenu {
+    padding: 0 8px 0 18px;
+    gap: 14px;
+  }
+
+  .barre-navigation__logo img {
+    width: 64px;
+    height: 32px;
+  }
+
+  .barre-navigation__liens {
+    display: none; /* remplacés par le menu plein écran */
+  }
+
+  .barre-navigation__langue {
+    margin-left: auto; /* pousse "EN" et le burger à droite */
+    font-size: 13px;
+  }
+
+  .barre-navigation__burger {
+    display: flex;
+  }
+}
+
+/* =============================================================
+   MENU PLEIN ÉCRAN (téléphone)
+   ============================================================= */
+
+/* Bloque le défilement de la page quand le menu est ouvert (classe ajoutée par React) */
+.menu-mobile-ouvert,
+.menu-mobile-ouvert body {
+  overflow: hidden;
+}
+
+.menu-plein-ecran {
+  display: none; /* n'existe pas sur ordinateur et tablette */
+}
+
+@media (max-width: 768px) {
+  .menu-plein-ecran {
+    position: fixed;
+    inset: 0;
+    z-index: 99; /* juste sous la pilule (100) : le bouton ✕ reste cliquable */
+    display: flex;
+    flex-direction: column;
+    padding: 120px 28px 36px;
+    background: var(--couleur-ivoire);
+    overflow: hidden;
+
+    /* fermé : invisible */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s;
+  }
+
+  .menu-plein-ecran.est-ouvert {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Portrait en filigrane en bas à droite */
+  .menu-plein-ecran__filigrane {
+    position: absolute;
+    right: -110px;
+    bottom: -80px;
+    width: 420px;
+    max-width: none;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  .menu-plein-ecran__liens {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .menu-plein-ecran__lien {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--couleur-encre);
+
+    /* chaque lien glisse et apparaît l'un après l'autre (--i = son numéro) */
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s;
+  }
+
+  .menu-plein-ecran.est-ouvert .menu-plein-ecran__lien {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: calc(0.1s + var(--i) * 0.07s);
+  }
+
+  .menu-plein-ecran__numero {
+    min-width: 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--couleur-menu);
+  }
+
+  .menu-plein-ecran__libelle {
+    font-size: 56px;
+    color: inherit;
+  }
+
+  .menu-plein-ecran__lien.est-actif,
+  .menu-plein-ecran__lien.est-actif .menu-plein-ecran__numero {
+    color: var(--couleur-or);
+  }
+
+  /* Langue + boutons de contact, collés en bas */
+  .menu-plein-ecran__actions {
+    position: relative;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .menu-plein-ecran__actions .bouton-dore {
+    width: 100%;
+  }
+
+  .menu-plein-ecran__langues {
+    align-self: flex-start;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 24px;
+    background: rgba(213, 173, 107, 0.12);
+  }
+
+  .menu-plein-ecran__langues button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--couleur-or-fonce);
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .menu-plein-ecran__langues button.est-actif {
+    background: var(--couleur-or);
+    color: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-plein-ecran,
+  .menu-plein-ecran__lien { transition: none; }
+}

@@ -1,0 +1,524 @@
+/* =============================================================
+   Section Accueil — occupe exactement la hauteur de l'écran
+   ============================================================= */
+.section-accueil {
+  position: relative; /* sert de repère pour les éléments "absolute" à l'intérieur */
+  height: var(--hauteur-ecran);
+  min-height: 560px;  /* sécurité pour les très petits écrans */
+  overflow: hidden;   /* coupe ce qui dépasse (le bas du portrait) */
+}
+
+/* Image de fond qui couvre toute la section */
+.section-accueil__fond {
+  position: absolute;
+  inset: 0;           /* = top:0; right:0; bottom:0; left:0 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* remplit sans déformer (recadre si besoin) */
+  opacity: 0.5;
+}
+
+/* Dégradé en bas de la section : l'image de fond se fond dans le blanc
+   au lieu de s'arrêter net. ::after = élément décoratif ajouté en CSS. */
+.section-accueil::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 25%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #fff);
+  pointer-events: none;
+}
+
+.section-accueil__contenu {
+  position: relative;
+  z-index: 1; /* au-dessus du dégradé */
+  max-width: var(--largeur-max);
+  height: 100%;
+  margin: 0 auto;
+
+  /* 📘 Flexbox : centre la colonne de texte verticalement.
+     padding-top = place de la barre de nav ; padding-bottom remonte
+     un peu le bloc (comme dans la maquette, il est au-dessus du centre). */
+  display: flex;
+  align-items: center;
+  padding: var(--hauteur-nav) 0 12vh;
+}
+
+/* Colonne de gauche : titre + texte + bouton */
+.section-accueil__texte {
+  position: relative;
+  z-index: 2;         /* au-dessus du portrait si les deux se chevauchent */
+  width: 520px;
+  margin-left: 110px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* La taille du titre suit la hauteur de l'écran : 96px max (maquette) */
+.section-accueil__titre {
+  font-size: clamp(56px, 11.5vh, 96px);
+  white-space: nowrap;
+}
+
+/* Petit trait doré sous le titre */
+.section-accueil__trait {
+  display: block;
+  width: 64px;
+  height: 2px;
+  margin-top: clamp(6px, 1.4vh, 12px);
+  background: var(--couleur-or);
+  border-radius: 2px;
+}
+
+.section-accueil__description {
+  margin-top: clamp(14px, 2.6vh, 22px);
+  font-size: var(--taille-texte);
+  line-height: var(--interligne-texte);
+}
+
+.section-accueil__boutons {
+  margin-top: clamp(20px, 4.3vh, 36px);
+}
+
+/* Portrait à droite : sa HAUTEUR suit celle de la section (la largeur suit
+   automatiquement grâce à width: auto), légèrement coupé en bas comme dans Figma */
+.section-accueil__portrait {
+  position: absolute;
+  top: -16px;
+  left: calc(50% + 4px);
+  height: calc(100% + 48px);
+  width: auto;
+  max-width: none;
+}
+
+.section-accueil__signature {
+  position: absolute;
+  left: 81px;
+  bottom: 9vh;
+}
+
+/* Éléments qui n'existent que sur tablette / téléphone : cachés sur ordinateur */
+.section-accueil__surtitre,
+.section-accueil__bouton-secondaire,
+.carte-flottante {
+  display: none;
+}
+
+/* =============================================================
+   CARTES FLOTTANTES (tablette) — style "verre dépoli"
+   ============================================================= */
+.carte-flottante {
+  position: absolute;
+  z-index: 3;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px 14px 16px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px rgba(115, 97, 71, 0.16);
+}
+
+.carte-flottante__badge {
+  width: 40px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.carte-flottante__textes {
+  display: flex;
+  flex-direction: column;
+}
+
+.carte-flottante__manuscrit {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.carte-flottante__petit {
+  font-size: 12px;
+  color: var(--couleur-menu);
+}
+
+.carte-flottante__fort {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--couleur-encre);
+}
+
+.carte-flottante__pastille {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(213, 173, 107, 0.15);
+  color: var(--couleur-or-fonce);
+}
+
+.carte-flottante__chevron {
+  font-size: 13px;
+  color: var(--couleur-or-fonce);
+  transition: transform 0.25s;
+}
+
+.carte-flottante--evenement:hover .carte-flottante__chevron {
+  transform: translateX(4px);
+}
+
+/* =============================================================
+   TABLETTE (769 → 1024px) : composition centrée
+   titre en haut, portrait au centre, cartes flottantes de chaque côté
+   ============================================================= */
+@media (max-width: 1024px) {
+  .section-accueil {
+    height: auto;
+    min-height: 0;
+  }
+
+  .section-accueil__contenu {
+    flex-direction: column;
+    align-items: center;
+    padding: calc(var(--hauteur-nav) + 56px) 0 0;
+  }
+
+  .section-accueil__texte {
+    width: min(640px, calc(100% - 48px));
+    margin: 0;
+    align-items: center;
+    text-align: center;
+  }
+
+  .section-accueil__surtitre {
+    display: inline-flex;
+    margin-bottom: 18px;
+  }
+
+  .section-accueil__titre {
+    font-size: clamp(72px, 12.5vw, 104px);
+    line-height: 1;
+    white-space: normal;
+  }
+
+  .section-accueil__trait,
+  .section-accueil__signature {
+    display: none;
+  }
+
+  .section-accueil__description {
+    max-width: 540px;
+    margin-top: 18px;
+    font-size: 17px;
+  }
+
+  .section-accueil__boutons {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .section-accueil__boutons .bouton-dore {
+    width: 300px;
+  }
+
+  .section-accueil__bouton-secondaire {
+    display: inline-flex;
+  }
+
+  .section-accueil__boutons .section-accueil__bouton-secondaire {
+    width: 230px;
+  }
+
+  /* Le portrait passe dans le flux, centré sous le texte.
+     Marge négative en haut : il remonte un peu sous les boutons (le haut de l'image est vide).
+     Marge négative en bas : le bas du portrait est coupé par la section. */
+  .section-accueil__portrait {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(600px, 75vw);
+    height: auto;
+    margin-top: -70px;
+    margin-bottom: calc(min(600px, 75vw) * -0.28);
+  }
+
+  .carte-flottante {
+    display: flex;
+  }
+
+  .carte-flottante--advisor {
+    left: 40px;
+    bottom: 330px;
+  }
+
+  .carte-flottante--evenement {
+    right: 34px;
+    bottom: 110px;
+  }
+}
+
+/* =============================================================
+   TÉLÉPHONE (≤ 768px) : style "magazine"
+   le portrait occupe le haut de l'écran, le texte est posé dessous
+   ============================================================= */
+@media (max-width: 768px) {
+  .section-accueil {
+    background: var(--couleur-ivoire);
+  }
+
+  .section-accueil::after {
+    display: none; /* remplacé par le dégradé sous le texte */
+  }
+
+  .section-accueil__contenu {
+    padding: 0;
+  }
+
+  /* 📘 order : change l'ordre d'affichage sans toucher au HTML
+     (dans le code, le texte est avant le portrait) */
+  .section-accueil__portrait {
+    order: 0;
+    width: 108%;
+    max-width: 480px;
+    margin: 40px 0 0;
+  }
+
+  .section-accueil__texte {
+    order: 1;
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    /* le texte remonte sur le bas du portrait */
+    margin-top: min(-52vw, -150px);
+    padding: 0 24px 40px;
+    align-items: stretch;
+    text-align: left;
+  }
+
+  /* Dégradé ivoire derrière le texte : le portrait se fond dans le fond */
+  .section-accueil__texte::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    right: 0;
+    top: -110px;
+    bottom: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(253, 251, 247, 0) 0,
+      rgba(253, 251, 247, 0.92) 110px,
+      var(--couleur-ivoire) 170px
+    );
+  }
+
+  .section-accueil__surtitre {
+    margin-bottom: 14px;
+  }
+
+  .section-accueil__titre {
+    font-size: clamp(56px, 17vw, 72px);
+    line-height: 0.95;
+  }
+
+  .section-accueil__description {
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .section-accueil__boutons {
+    margin-top: 24px;
+  }
+
+  .section-accueil__boutons .bouton-dore {
+    width: 100%;
+  }
+
+  .section-accueil__bouton-secondaire,
+  .carte-flottante {
+    display: none !important;
+  }
+}
+
+/* =============================================================
+   ANIMATIONS D'ENTRÉE DU HERO
+   Elles ne démarrent que quand la section reçoit la classe
+   "est-pret" (ajoutée par React quand l'écran de chargement a fini).
+   ============================================================= */
+
+/* Le titre est découpé en mots puis en lettres (voir SectionAccueil.jsx) */
+.titre-mot {
+  display: inline-block;
+  white-space: nowrap; /* un mot n'est jamais coupé */
+}
+
+.titre-lettre {
+  display: inline-block; /* nécessaire pour pouvoir déplacer/tourner chaque lettre */
+}
+
+/* --- AVANT le départ : les éléments animés sont cachés --- */
+.section-accueil:not(.est-pret) .titre-lettre,
+.section-accueil:not(.est-pret) .section-accueil__trait,
+.section-accueil:not(.est-pret) .section-accueil__description,
+.section-accueil:not(.est-pret) .section-accueil__surtitre,
+.section-accueil:not(.est-pret) .section-accueil__boutons,
+.section-accueil:not(.est-pret) .carte-flottante,
+.section-accueil:not(.est-pret) .section-accueil__portrait,
+.section-accueil:not(.est-pret) .section-accueil__signature {
+  opacity: 0;
+}
+
+/* --- APRÈS le départ : chaque élément a son animation ---
+   Syntaxe : animation: NOM DURÉE COURBE DÉLAI both
+   "both" = garde l'état de départ pendant le délai, et l'état final après. */
+
+/* 1. Le fond : léger zoom arrière, très lent (effet "caméra qui recule") */
+.est-pret .section-accueil__fond {
+  animation: fond-zoom 2.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* 2. Le portrait : arrive de la droite en sortant d'un flou */
+.est-pret .section-accueil__portrait {
+  animation: portrait-entree 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+
+/* 3. Le titre : les lettres montent une par une.
+   Délai = 0,3 s + (numéro de la lettre × 45 ms) → effet cascade */
+.est-pret .titre-lettre {
+  animation: lettre-entree 0.9s cubic-bezier(0.22, 1, 0.36, 1)
+    calc(0.3s + var(--i) * 45ms) both;
+}
+
+/* 4. Le trait doré s'étire de gauche à droite */
+.est-pret .section-accueil__trait {
+  transform-origin: left;
+  animation: trait-etire 0.9s cubic-bezier(0.65, 0, 0.35, 1) 1s both;
+}
+
+/* 5. Le paragraphe monte en sortant d'un flou */
+.est-pret .section-accueil__description {
+  animation: monter-net 1s cubic-bezier(0.22, 1, 0.36, 1) 1.1s both;
+}
+
+/* 6. Le bouton apparaît, puis un reflet lumineux le traverse une fois */
+.est-pret .section-accueil__boutons {
+  animation: bouton-entree 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 1.35s both;
+}
+
+.section-accueil__boutons .bouton-dore {
+  position: relative;
+  overflow: hidden; /* le reflet ne dépasse pas du bouton */
+}
+
+/* le reflet ne passe que sur le bouton principal (le 1er) */
+.section-accueil__boutons .bouton-dore:first-child::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(110deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-20deg);
+  opacity: 0;
+}
+
+.est-pret /* le reflet ne passe que sur le bouton principal (le 1er) */
+.section-accueil__boutons .bouton-dore:first-child::after {
+  animation: reflet 1.1s ease-in-out 2.3s both;
+}
+
+/* 0. Le surtitre (tablette / téléphone) */
+.est-pret .section-accueil__surtitre {
+  animation: monter-net 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* 8. Les cartes flottantes (tablette) apparaissent avec un petit rebond */
+.est-pret .carte-flottante--advisor {
+  animation: carte-entree 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 1.6s both;
+}
+
+.est-pret .carte-flottante--evenement {
+  animation: carte-entree 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 1.8s both;
+}
+
+/* Sur téléphone, le portrait monte depuis le bas au lieu d'arriver de la droite */
+@media (max-width: 768px) {
+  .est-pret .section-accueil__portrait {
+    animation-name: portrait-entree-mobile;
+  }
+}
+
+/* 7. La signature glisse depuis la gauche */
+.est-pret .section-accueil__signature {
+  animation: glisser-gauche 1s cubic-bezier(0.22, 1, 0.36, 1) 1.7s both;
+}
+
+/* ---------- Les étapes de chaque animation ---------- */
+@keyframes fond-zoom {
+  from { transform: scale(1.1); }
+  to   { transform: scale(1); }
+}
+
+@keyframes portrait-entree {
+  from { opacity: 0; transform: translateX(70px) scale(1.03); filter: blur(12px); }
+  to   { opacity: 1; transform: translateX(0) scale(1);       filter: blur(0); }
+}
+
+@keyframes lettre-entree {
+  from { opacity: 0; transform: translateY(0.5em) rotate(8deg); filter: blur(8px); }
+  to   { opacity: 1; transform: translateY(0) rotate(0);        filter: blur(0); }
+}
+
+@keyframes trait-etire {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes monter-net {
+  from { opacity: 0; transform: translateY(24px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+
+@keyframes bouton-entree {
+  from { opacity: 0; transform: translateY(20px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes reflet {
+  0%   { left: -60%; opacity: 1; }
+  100% { left: 130%; opacity: 1; }
+}
+
+@keyframes portrait-entree-mobile {
+  from { opacity: 0; transform: translateY(40px) scale(1.03); filter: blur(12px); }
+  to   { opacity: 1; transform: translateY(0) scale(1);       filter: blur(0); }
+}
+
+@keyframes carte-entree {
+  from { opacity: 0; transform: translateY(24px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes glisser-gauche {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Accessibilité : pas d'animation si l'utilisateur les a désactivées,
+   tout est affiché directement */
+@media (prefers-reduced-motion: reduce) {
+  .section-accueil *,
+  .section-accueil *::after {
+    animation: none !important;
+  }
+  .section-accueil:not(.est-pret) * {
+    opacity: 1 !important;
+  }
+}

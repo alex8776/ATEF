@@ -1,0 +1,181 @@
+/* =============================================================
+   Navigation section par section — effet "cartes empilées"
+   ============================================================= */
+
+/* Ajoutée sur <html> par le composant : supprime la barre de défilement */
+.sans-defilement,
+.sans-defilement body {
+  overflow: hidden;
+  height: 100%;
+  overscroll-behavior: none; /* pas d'effet "rebond" en haut/bas de page */
+}
+
+/* Le conteneur occupe tout l'écran */
+.defilement-sections {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #1f1d1a; /* visible derrière les cartes quand elles reculent */
+}
+
+/* Chaque panneau = une "carte" plein écran, superposée aux autres */
+.panneau {
+  position: absolute;
+  inset: 0;
+  height: var(--hauteur-ecran);
+  overflow: hidden;
+  background: #fff;
+  transform-origin: center top;
+  will-change: transform; /* prévient le navigateur : animation plus fluide */
+
+  /* Toutes les transitions durent --duree-transition (définie dans le .jsx) */
+  transition:
+    transform var(--duree-transition) cubic-bezier(0.77, 0, 0.18, 1),
+    filter var(--duree-transition) ease,
+    border-radius var(--duree-transition) ease;
+}
+
+/* --- La section affichée --- */
+.panneau.est-actif {
+  transform: translateY(0) scale(1);
+}
+
+/* --- Les sections déjà vues : elles reculent, s'arrondissent et s'assombrissent ---
+   (la suivante monte par-dessus, comme une carte qu'on pose sur la pile) */
+.panneau.est-passe {
+  transform: translateY(-3%) scale(0.92);
+  border-radius: 32px;
+  filter: brightness(0.75);
+}
+
+/* --- Les sections pas encore vues : cachées sous le bas de l'écran --- */
+.panneau.est-a-venir {
+  transform: translateY(100%);
+}
+
+/* Ombre portée vers le haut sur la carte qui arrive, pour bien voir la superposition */
+.panneau:not(:first-child) {
+  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.18);
+}
+
+/* --- Cas particulier : le footer ---
+   Il ne prend pas tout l'écran : il monte seulement de sa propre hauteur,
+   et laisse voir la section précédente (reculée) au-dessus de lui. */
+.panneau--pied {
+  top: auto;
+  bottom: 0;
+  height: auto;
+  border-radius: 32px 32px 0 0;
+  transform-origin: center bottom;
+}
+
+/* =============================================================
+   Points de navigation (à droite)
+   ============================================================= */
+.defilement-points {
+  position: fixed;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50; /* au-dessus des panneaux, sous la barre de navigation */
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.defilement-point {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  border-radius: 10px;
+  background: rgba(213, 173, 107, 0.35);
+  transition: height 0.4s ease, background 0.4s ease;
+}
+
+/* Le point actif s'allonge et devient doré */
+.defilement-point.est-actif {
+  height: 30px;
+  background: var(--couleur-or);
+}
+
+/* Nom de la section, affiché au survol à gauche du point */
+.defilement-point__nom {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translate(6px, -50%);
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--couleur-or-fonce);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+}
+
+.defilement-point:hover .defilement-point__nom {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+/* =============================================================
+   Indication "Défiler" (souris animée en bas du hero)
+   ============================================================= */
+.defilement-indice {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 50;
+  transform: translate(-50%, 10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--couleur-or-fonce);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Visible seulement sur la première section, après les animations du hero */
+.defilement-indice.est-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+  transition-delay: 1.8s;
+}
+
+.defilement-indice__souris {
+  width: 22px;
+  height: 34px;
+  border: 1.5px solid var(--couleur-or);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+/* La petite molette descend en boucle */
+.defilement-indice__molette {
+  width: 3px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--couleur-or);
+  animation: molette 1.6s ease-in-out infinite;
+}
+
+@keyframes molette {
+  0%   { transform: translateY(0); opacity: 1; }
+  70%  { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+
+/* Accessibilité : changement de section instantané si les animations sont désactivées */
+@media (prefers-reduced-motion: reduce) {
+  .panneau { transition: none; }
+  .defilement-indice__molette { animation: none; }
+}
